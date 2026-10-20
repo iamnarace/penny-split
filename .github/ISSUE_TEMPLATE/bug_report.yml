@@ -1,0 +1,26 @@
+name: Bug report
+description: A wrong amount, a confusing message, or something that doesn't work
+labels: [bug]
+body:
+  - type: input
+    id: link
+    attributes:
+      label: Share link for the bill
+      description: Use "Share link" in penny-split. It contains only what you entered.
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: What penny-split showed
+    validations:
+      required: true
+  - type: input
+    id: browser
+    attributes:
+      label: Browser and device
+      placeholder: Safari on iPhone 15

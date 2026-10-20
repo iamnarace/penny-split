@@ -1,0 +1,57 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      # No lockfile is committed yet for the dev tools (see README, "Dependencies and supply chain").
+      # Install without running any package lifecycle scripts, then verify before using anything.
+      - name: Install dependencies (no install scripts)
+        run: npm install --ignore-scripts --no-fund
+
+      - name: Verify registry signatures and provenance attestations
+        run: npm audit signatures
+
+      - name: Check for known vulnerabilities (fail on high or critical)
+        run: npm audit --audit-level=high
+
+      - name: Type-check
+        run: npm run typecheck
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Unit and component tests
+        run: npm test
+
+      - name: Production build
+        run: npm run build
+
+      - name: Upload the resolved lockfile for review
+        uses: actions/upload-artifact@v4
+        with:
+          name: package-lock
+          path: package-lock.json
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Browser tests against the production build
+        run: |
+          python -m pip install playwright==1.56.0
+          python -m playwright install --with-deps chromium
+          python e2e/smoke.py dist

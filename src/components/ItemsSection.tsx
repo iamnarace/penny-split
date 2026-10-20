@@ -16,7 +16,7 @@ interface Props {
 }
 
 export function ItemsSection(props: Props) {
-  const { items, people, currency, onAdd } = props;
+  const { items, onAdd } = props;
   return (
     <section className="panel" aria-labelledby="items-heading">
       <h2 id="items-heading">What you ordered</h2>

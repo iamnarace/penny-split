@@ -15,7 +15,9 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          # Node 24 ships npm 11. npm 10.9.9 (Node 22) crashes in its peer-dependency resolver
+          # ("Cannot read properties of null (reading 'edgesOut')") on Vitest's optional peers.
+          node-version: 24
 
       # No lockfile is committed yet for the dev tools (see README, "Dependencies and supply chain").
       # Install without running any package lifecycle scripts, then verify before using anything.

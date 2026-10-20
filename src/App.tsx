@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
-import { ExtrasSection, type Preset } from "./components/ExtrasSection";
+import { ExtrasSection } from "./components/ExtrasSection";
 import { GuestCheck } from "./components/GuestCheck";
 import { ItemsSection } from "./components/ItemsSection";
 import { PeopleSection } from "./components/PeopleSection";
 import { Toast, type ToastMessage } from "./components/Toast";
 import { type Bill, computeSplit, emptyBill } from "./lib/bill";
 import { CURRENCIES, formatMoney, fractionDigits, guessCurrency } from "./lib/money";
+import type { Preset } from "./lib/presets";
 import { sampleBill } from "./lib/sample";
 import { billFromHash, encodeBill, MAX_LINK_CHARS, ShareError } from "./lib/share";
 import { summaryText } from "./lib/summary";

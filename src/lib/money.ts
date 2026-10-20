@@ -61,7 +61,7 @@ export function toInputValue(minor: number, currency: string): string {
  */
 export function parseMoney(input: string, currency: string, { allowNegative = false } = {}): number | null {
   const digits = fractionDigits(currency);
-  let text = input.trim().replace(/[\s  ']/g, "");
+  let text = input.trim().replace(/[\s\u00a0\u202f']/g, "");
   if (!text) return null;
 
   let negative = false;

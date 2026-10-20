@@ -46,7 +46,8 @@ def test_split_a_bill(page: Page, url: str) -> None:
     page.get_by_label("Add a person").press("Enter")
     page.get_by_role("button", name="Add item").click()
     page.get_by_label("Item 1 name").fill("Pizza")
-    page.get_by_label("Price").fill("30")
+    page.get_by_label("Price").click()
+    page.keyboard.type("30")  # type like a person: the new field must not already contain "0.00"
     expect(owes(page, "Ana")).to_have_text("$15.00")
     expect(owes(page, "Ben")).to_have_text("$15.00")
     page.get_by_role("group", name="Who had Pizza").get_by_role("button", name="Ana").click()

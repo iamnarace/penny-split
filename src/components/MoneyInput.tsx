@@ -31,15 +31,17 @@ export function MoneyInput({
   onEnter,
 }: Props) {
   const id = useId();
-  const [text, setText] = useState(cents == null ? "" : toInputValue(cents, currency));
+  // Zero shows as an empty field (with the placeholder), so typing replaces it instead of appending.
+  const display = (value: number | null) => (value == null || value === 0 ? "" : toInputValue(value, currency));
+  const [text, setText] = useState(display(cents));
   const [error, setError] = useState<string | null>(null);
 
   // Follow outside changes (loading a shared bill, switching currency).
   useEffect(() => {
     setText((current) => {
       const parsed = parseMoney(current, currency, { allowNegative });
-      if (parsed === cents || (cents == null && current.trim() === "")) return current;
-      return cents == null ? "" : toInputValue(cents, currency);
+      if (parsed === cents || ((cents == null || cents === 0) && current.trim() === "")) return current;
+      return cents == null || cents === 0 ? "" : toInputValue(cents, currency);
     });
   }, [cents, currency, allowNegative]);
 
@@ -79,7 +81,7 @@ export function MoneyInput({
         aria-describedby={error ? `${id}-error` : undefined}
         onChange={(e) => handle(e.target.value)}
         onBlur={() => {
-          if (!error && cents != null) setText(toInputValue(cents, currency));
+          if (!error && cents != null && text.trim() !== "") setText(toInputValue(cents, currency));
         }}
         onKeyDown={(e) => {
           if (e.key === "Enter" && onEnter) {

@@ -22,6 +22,12 @@ jobs:
       - name: Install dependencies (no install scripts)
         run: npm install --ignore-scripts --no-fund
 
+      - name: Show npm debug log if the install failed
+        if: failure()
+        run: |
+          npm --version
+          tail -n 60 ~/.npm/_logs/*-debug-0.log
+
       - name: Verify registry signatures and provenance attestations
         run: npm audit signatures
 

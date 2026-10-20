@@ -1,5 +1,7 @@
 # penny-split
 
+[![CI](https://github.com/iamnarace/penny-split/actions/workflows/ci.yml/badge.svg)](https://github.com/iamnarace/penny-split/actions/workflows/ci.yml)
+
 **Split an itemised receipt to the exact cent.** Add who was at the table and what everyone had; shared dishes, uneven portions, tax, tip, surcharges and discounts are divided fairly, and every person's share adds up to the receipt total exactly. No accounts, no server: the bill lives on your device and in the link you share.
 
 ![penny-split splitting a dinner for four, matching the receipt to the cent](docs/screenshots/split-desktop.png)
@@ -39,7 +41,7 @@ React 19, TypeScript, Vite; Vitest with Testing Library and jsdom for tests; ESL
 
 ## Getting started
 
-Prerequisites: Node.js 20.19 or newer.
+Prerequisites: Node.js 20.19 or newer, with npm 11 recommended (Node 24 ships it). npm 10.9 can crash while resolving Vitest's optional peer dependencies.
 
 ```bash
 git clone https://github.com/iamnarace/penny-split.git
@@ -61,15 +63,20 @@ python e2e/smoke.py dist   # browser tests: pip install playwright && playwright
 
 ## Verification status
 
-Be aware of how this first release was verified.
+Every push runs the full pipeline in GitHub Actions. On the first release (run 39354117949, commit `7d91eb3`):
 
-The development sandbox's security tooling (a Semgrep Guardian hook that could not authenticate there) blocked all `npm` commands. So the dev tooling (Vite, Vitest, ESLint, Testing Library, `@types/react`) could not be installed locally. What was verified locally, without installing anything new:
+- 264 installed packages had verified npm registry signatures and 88 had provenance attestations (`npm audit signatures`).
+- `npm audit`: 0 vulnerabilities.
+- The project type-check and ESLint passed.
+- **77 Vitest tests passed**: 66 engine, parsing and link tests, plus 11 component tests with Testing Library.
+- The Vite production build succeeded, and **12 browser tests** passed in Chromium against that build.
 
-- **Type-check** of all engine and state modules with TypeScript 6.0.3 (strict).
-- **66 engine, parsing and share-link tests** (`src/lib/*.test.ts`), run on Node's test runner through a small Vitest-compatible shim.
-- **12 browser tests** (`e2e/smoke.py`) in Chromium against an esbuild bundle of the app, with no console errors. The screenshots come from that build.
+Development note: in the original development sandbox, a security hook blocked `npm`, so the first round of checks ran locally with preinstalled tools: an esbuild bundle, TypeScript on the engine, and the engine tests on Node's test runner. CI then found and fixed things local checks couldn't reach:
 
-The full Vitest suite (including the component tests in `src/App.test.tsx`), the project-wide type-check, ESLint, the Vite build and the browser tests against the Vite build all run in GitHub Actions. Check the CI badge or the Actions tab for their current status.
+- an npm 10 resolver crash, fixed by using npm 11 in CI;
+- missing Vite client types for CSS imports;
+- a lint issue: invisible non-breaking spaces in the parser source;
+- a real input bug: a new price field showed "0.00", so typing appended to it.
 
 ## Dependencies and supply chain
 
